@@ -1,12 +1,20 @@
-﻿namespace VendingMachine.Models
+﻿using Microsoft.AspNetCore.Identity;
+
+namespace VendingMachine.Models
 {
 
-    public class User
+    public class ApplicationUser : IdentityUser
     {
-        public int Id { get; set; }
-        public string Username { get; set; } = string.Empty;
-        public string PasswordHash { get; set; } = string.Empty;
-        public string Role { get; set; } = "Buyer"; // Default role
+        public UserRole Role { get; set; }
+        public int Balance { get; set; } // In cents
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+        public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
+    }
+
+    public enum UserRole
+    {
+        Buyer,
+        Seller
     }
 
 }
