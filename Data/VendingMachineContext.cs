@@ -6,9 +6,20 @@ namespace VendingMachine.Data
 {
     public class VendingMachineContext : IdentityDbContext<ApplicationUser>
     {
+        public VendingMachineContext()
+        {
+        }
         public VendingMachineContext(DbContextOptions<VendingMachineContext> options)
             : base(options)
         {
+        }
+
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            if (!optionsBuilder.IsConfigured)
+            {
+                optionsBuilder.UseSqlServer("Server=CALIBARN;Database=VendingDB;Trusted_Connection=true;TrustServerCertificate=true;");
+            }
         }
 
         public DbSet<Product> Products { get; set; }

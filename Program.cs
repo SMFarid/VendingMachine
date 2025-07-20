@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Serilog.Context;
 using System.Text;
 using VendingMachine.Data;
 using VendingMachine.Models;
@@ -10,10 +11,11 @@ using VendingMachine.Services;
 
 
 var builder = WebApplication.CreateBuilder(args);
-
+var connectionString = "Server=CALIBARN;Database=VendingDB;Trusted_Connection=true;TrustServerCertificate=true;";
 // Add services to the container
-builder.Services.AddDbContext<VendingMachineContext>(options =>
-    options.UseInMemoryDatabase("VendingMachineDB"));
+var options = new DbContextOptionsBuilder<VendingMachineContext>()
+    .UseSqlServer(connectionString)
+    .Options;
 
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
     .AddEntityFrameworkStores<VendingMachineContext>()
