@@ -39,7 +39,7 @@ namespace VendingMachine.Controllers
                     Id = user.Id,
                     Username = user.UserName ?? "",
                     Role = user.Role.ToString(),
-                    Balance = user.Role == UserRole.Buyer ? user.Balance : null,
+                    Balance = user.Role == UserRole.Buyer ? user.Deposit : null,
                     CreatedAt = user.CreatedAt,
                     UpdatedAt = user.UpdatedAt
                 },

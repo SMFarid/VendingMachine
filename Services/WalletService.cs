@@ -19,7 +19,7 @@ namespace VendingMachine.Services
             if (user == null) throw new InvalidOperationException("User not found");
 
             var depositAmount = coins.Sum();
-            user.Balance += depositAmount;
+            user.Deposit += depositAmount;
             user.UpdatedAt = DateTime.UtcNow;
 
             await _context.SaveChangesAsync();
@@ -28,14 +28,14 @@ namespace VendingMachine.Services
             {
                 Message = "Coins deposited successfully",
                 DepositedAmount = depositAmount,
-                TotalBalance = user.Balance
+                TotalBalance = user.Deposit
             };
         }
 
         public async Task<int> GetBalanceAsync(string userId)
         {
             var user = await _context.Users.FindAsync(userId);
-            return user?.Balance ?? 0;
+            return user?.Deposit ?? 0;
         }
 
         public async Task<List<int>> ResetWalletAsync(string userId)
@@ -43,8 +43,8 @@ namespace VendingMachine.Services
             var user = await _context.Users.FindAsync(userId);
             if (user == null) throw new InvalidOperationException("User not found");
 
-            var returnedCoins = CalculateChange(user.Balance);
-            user.Balance = 0;
+            var returnedCoins = CalculateChange(user.Deposit);
+            user.Deposit = 0;
             user.UpdatedAt = DateTime.UtcNow;
 
             await _context.SaveChangesAsync();

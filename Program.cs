@@ -8,6 +8,9 @@ using System.Text;
 using VendingMachine.Data;
 using VendingMachine.Models;
 using VendingMachine.Services;
+using Serilog;
+
+
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -17,13 +20,23 @@ var options = new DbContextOptionsBuilder<VendingMachineContext>()
     .UseSqlServer(connectionString)
     .Options;
 
+// Reads configuration from appsettings.json (Serilog section)
+builder.Host.UseSerilog((context, services, configuration) => configuration
+    .ReadFrom.Configuration(context.Configuration)
+    .ReadFrom.Services(services)
+    .Enrich.FromLogContext()
+    .WriteTo.Console() // Still write to console
+    .WriteTo.Debug()   // Still write to debug output
+    .WriteTo.File("logs/log-.txt", rollingInterval: RollingInterval.Day, // Write to a file, new file each day
+                  outputTemplate: "{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} [{Level:u3}] {Message:lj}{NewLine}{Exception}"));
+
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
     .AddEntityFrameworkStores<VendingMachineContext>()
     .AddDefaultTokenProviders();
 
 // JWT Configuration
-var jwtSettings = builder.Configuration.GetSection("JwtSettings");
-var key = Encoding.ASCII.GetBytes(jwtSettings["SecretKey"]);
+var jwtSettings = builder.Configuration.GetSection("Jwt");
+var key = Encoding.ASCII.GetBytes(jwtSettings["Key"]);
 
 builder.Services.AddAuthentication(options =>
 {

@@ -25,11 +25,11 @@ namespace VendingMachine.Services
                 throw new InvalidOperationException("Insufficient stock");
 
             var totalCost = product.Cost * request.Quantity;
-            if (buyer.Balance < totalCost)
+            if (buyer.Deposit < totalCost)
                 throw new InvalidOperationException("Insufficient funds");
 
             // Update buyer balance and product stock
-            buyer.Balance -= totalCost;
+            buyer.Deposit -= totalCost;
             product.AmountAvailable -= request.Quantity;
             product.UpdatedAt = DateTime.UtcNow;
             buyer.UpdatedAt = DateTime.UtcNow;
@@ -50,7 +50,7 @@ namespace VendingMachine.Services
             await _context.SaveChangesAsync();
 
             // Calculate change (not deducted from balance, just informational)
-            var change = _walletService.CalculateChange(buyer.Balance);
+            var change = _walletService.CalculateChange(buyer.Deposit);
 
             return new PurchaseResponse
             {
@@ -68,7 +68,7 @@ namespace VendingMachine.Services
                 //    Timestamp = transaction.Timestamp
                 //},
                 Change = change,
-                RemainingBalance = buyer.Balance
+                RemainingBalance = buyer.Deposit
             };
         }
 

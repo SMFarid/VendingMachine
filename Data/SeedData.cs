@@ -23,7 +23,7 @@ namespace VendingMachine.Data
                 UserName = "buyer1",
                 Email = "buyer1@example.com",
                 Role = UserRole.Buyer,
-                Balance = 0
+                Deposit = 0
             };
             await userManager.CreateAsync(buyer, "Buyer123!");
 

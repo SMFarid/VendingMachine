@@ -17,8 +17,8 @@ namespace VendingMachine.Services
 
         public string GenerateToken(ApplicationUser user)
         {
-            var jwtSettings = _configuration.GetSection("JwtSettings");
-            var key = Encoding.ASCII.GetBytes(jwtSettings["SecretKey"]);
+            var jwtSettings = _configuration.GetSection("Jwt");
+            var key = Encoding.ASCII.GetBytes(jwtSettings["Key"]);
 
             var tokenDescriptor = new SecurityTokenDescriptor
             {
