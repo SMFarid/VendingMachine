@@ -24,23 +24,7 @@ namespace VendingMachine.Controllers
             try
             {
                 var userId = User.FindFirst("userId")?.Value;
-                var response = await _purchaseService.PurchaseProductAsync(userId!, request);
-                return Ok(response);
-            }
-            catch (InvalidOperationException ex)
-            {
-                return UnprocessableEntity(new { error = ex.Message });
-            }
-        }
-
-        [HttpPost]
-        [Route("Deposit")]
-        public async Task<ActionResult<PurchaseResponse>> Deposit(PurchaseRequest request)
-        {
-            try
-            {
-                var userId = User.FindFirst("userId")?.Value;
-                var response = await _purchaseService.PurchaseProductAsync(userId!, request);
+                var response = await _purchaseService.PurchaseProductAsync(int.Parse(userId!), request);
                 return Ok(response);
             }
             catch (InvalidOperationException ex)

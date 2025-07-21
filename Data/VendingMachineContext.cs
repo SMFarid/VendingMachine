@@ -24,7 +24,7 @@ namespace VendingMachine.Data
 
         public DbSet<Product> Products { get; set; }
         public DbSet<User> Users { get; set; }
-        //public DbSet<Transaction> Transactions { get; set; }
+        public DbSet<Transaction> Transactions { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -52,22 +52,22 @@ namespace VendingMachine.Data
                       .OnDelete(DeleteBehavior.Restrict);
             });
 
-            //builder.Entity<Transaction>(entity =>
-            //{
-            //    entity.HasKey(e => e.Id);
-            //    entity.HasOne(e => e.Buyer)
-            //          .WithMany()
-            //          .HasForeignKey(e => e.BuyerId)
-            //          .OnDelete(DeleteBehavior.Restrict);
-            //    entity.HasOne(e => e.Seller)
-            //          .WithMany()
-            //          .HasForeignKey(e => e.SellerId)
-            //          .OnDelete(DeleteBehavior.Restrict);
-            //    entity.HasOne(e => e.Product)
-            //          .WithMany()
-            //          .HasForeignKey(e => e.ProductId)
-            //          .OnDelete(DeleteBehavior.Restrict);
-            //});
+            builder.Entity<Transaction>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+                entity.HasOne(e => e.Buyer)
+                      .WithMany()
+                      .HasForeignKey(e => e.BuyerId)
+                      .OnDelete(DeleteBehavior.Restrict);
+                entity.HasOne(e => e.Seller)
+                      .WithMany()
+                      .HasForeignKey(e => e.SellerId)
+                      .OnDelete(DeleteBehavior.Restrict);
+                entity.HasOne(e => e.Product)
+                      .WithMany()
+                      .HasForeignKey(e => e.ProductId)
+                      .OnDelete(DeleteBehavior.Restrict);
+            });
         }
     }
 }

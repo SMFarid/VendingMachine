@@ -7,7 +7,7 @@ namespace VendingMachine.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    [Authorize(Policy = "BuyerOnly")]
+    [Authorize(Roles = "Buyer")]
     public class WalletController : ControllerBase
     {
         private readonly IWalletService _walletService;

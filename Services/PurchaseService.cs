@@ -1,5 +1,7 @@
-﻿using VendingMachine.Data;
+﻿using Microsoft.EntityFrameworkCore;
+using VendingMachine.Data;
 using VendingMachine.DTOs;
+using VendingMachine.Models;
 
 namespace VendingMachine.Services
 {
@@ -14,7 +16,7 @@ namespace VendingMachine.Services
             _walletService = walletService;
         }
 
-        public async Task<PurchaseResponse> PurchaseProductAsync(string buyerId, PurchaseRequest request)
+        public async Task<PurchaseResponse> PurchaseProductAsync(int buyerId, PurchaseRequest request)
         {
             var buyer = await _context.Users.FindAsync(buyerId);
             var product = await _context.Products.FindAsync(request.ProductId);
@@ -34,6 +36,20 @@ namespace VendingMachine.Services
             product.UpdatedAt = DateTime.UtcNow;
             buyer.UpdatedAt = DateTime.UtcNow;
 
+            // Create transaction record
+            var transaction = new Transaction
+            {
+                ProductId = product.Id,
+                ProductName = product.ProductName,
+                Quantity = request.Quantity,
+                UnitCost = product.Cost,
+                TotalCost = totalCost,
+                BuyerId = buyerId,
+                SellerId = product.SellerId
+            };
+
+            _context.Transactions.Add(transaction);
+
             await _context.SaveChangesAsync();
 
             // Calculate change (not deducted from balance, just informational)
@@ -48,5 +64,26 @@ namespace VendingMachine.Services
             };
         }
 
+        public async Task<List<TransactionDto>> GetTransactionHistoryAsync(int userId, int limit = 50, int offset = 0)
+        {
+            return await _context.Transactions
+                .Where(t => t.BuyerId == userId)
+                .OrderByDescending(t => t.Timestamp)
+                .Skip(offset)
+                .Take(limit)
+                .Select(t => new TransactionDto
+                {
+                    Id = t.Id,
+                    ProductId = t.ProductId,
+                    ProductName = t.ProductName,
+                    Quantity = t.Quantity,
+                    UnitCost = t.UnitCost,
+                    TotalCost = t.TotalCost,
+                    BuyerId = t.BuyerId,
+                    SellerId = t.SellerId,
+                    Timestamp = t.Timestamp
+                })
+                .ToListAsync();
+        }
     }
 }
