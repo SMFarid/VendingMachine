@@ -4,6 +4,6 @@ namespace VendingMachine.Services
 {
     public interface ITokenService
     {
-        string GenerateToken(ApplicationUser user);
+        string GenerateToken(User user);
     }
 }

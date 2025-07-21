@@ -50,7 +50,7 @@ namespace VendingMachine.Services
             };
         }
 
-        public async Task<ProductDto> CreateProductAsync(CreateProductRequest request, string sellerId)
+        public async Task<ProductDto> CreateProductAsync(CreateProductRequest request, int sellerId)
         {
             var product = new Product
             {
@@ -75,7 +75,7 @@ namespace VendingMachine.Services
             };
         }
 
-        public async Task<ProductDto?> UpdateProductAsync(string id, UpdateProductRequest request, string sellerId)
+        public async Task<ProductDto?> UpdateProductAsync(string id, UpdateProductRequest request, int sellerId)
         {
             var product = await _context.Products.FindAsync(id);
             if (product == null || product.SellerId != sellerId) return null;
@@ -103,7 +103,7 @@ namespace VendingMachine.Services
             };
         }
 
-        public async Task<bool> DeleteProductAsync(string id, string sellerId)
+        public async Task<bool> DeleteProductAsync(string id, int sellerId)
         {
             var product = await _context.Products.FindAsync(id);
             if (product == null || product.SellerId != sellerId) return false;

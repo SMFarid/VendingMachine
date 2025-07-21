@@ -32,19 +32,19 @@ namespace VendingMachine.Controllers
             }
         }
 
-        [HttpPost]
-        public async Task<ActionResult<PurchaseResponse>> Deposit(PurchaseRequest request)
-        {
-            try
-            {
-                var userId = User.FindFirst("userId")?.Value;
-                var response = await _purchaseService.PurchaseProductAsync(userId!, request);
-                return Ok(response);
-            }
-            catch (InvalidOperationException ex)
-            {
-                return UnprocessableEntity(new { error = ex.Message });
-            }
-        }
+        //[HttpPost]
+        //public async Task<ActionResult<PurchaseResponse>> Deposit(PurchaseRequest request)
+        //{
+        //    try
+        //    {
+        //        var userId = User.FindFirst("userId")?.Value;
+        //        var response = await _purchaseService.PurchaseProductAsync(userId!, request);
+        //        return Ok(response);
+        //    }
+        //    catch (InvalidOperationException ex)
+        //    {
+        //        return UnprocessableEntity(new { error = ex.Message });
+        //    }
+        //}
     }
 }

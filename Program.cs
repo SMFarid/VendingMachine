@@ -30,9 +30,11 @@ builder.Host.UseSerilog((context, services, configuration) => configuration
     .WriteTo.File("logs/log-.txt", rollingInterval: RollingInterval.Day, // Write to a file, new file each day
                   outputTemplate: "{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} [{Level:u3}] {Message:lj}{NewLine}{Exception}"));
 
-builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
-    .AddEntityFrameworkStores<VendingMachineContext>()
-    .AddDefaultTokenProviders();
+//builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
+//    .AddEntityFrameworkStores<VendingMachineContext>()
+//    .AddDefaultTokenProviders();
+
+builder.Services.AddDbContext<VendingMachineContext>();
 
 // JWT Configuration
 var jwtSettings = builder.Configuration.GetSection("Jwt");
@@ -65,6 +67,7 @@ builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<IWalletService, WalletService>();
 builder.Services.AddScoped<IPurchaseService, PurchaseService>();
+builder.Services.AddScoped<IUserService, UserService>();
 
 builder.Services.AddControllers();
 builder.Services.AddSwaggerGen(c =>
@@ -109,11 +112,11 @@ app.UseAuthorization();
 app.MapControllers();
 
 // Seed data
-using (var scope = app.Services.CreateScope())
-{
-    var context = scope.ServiceProvider.GetRequiredService<VendingMachineContext>();
-    var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
-    await SeedData.Initialize(context, userManager);
-}
+//using (var scope = app.Services.CreateScope())
+//{
+//    var context = scope.ServiceProvider.GetRequiredService<VendingMachineContext>();
+//    //var userManager = scope.ServiceProvider.GetRequiredService<UserManager<User>>();
+//    //await SeedData.Initialize(context, userManager);
+//}
 
 app.Run();

@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using VendingMachine.Data;
 
@@ -11,9 +12,11 @@ using VendingMachine.Data;
 namespace VendingMachine.Migrations
 {
     [DbContext(typeof(VendingMachineContext))]
-    partial class VendingMachineContextModelSnapshot : ModelSnapshot
+    [Migration("20250721094959_RemoveIdentityUser")]
+    partial class RemoveIdentityUser
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -49,19 +52,11 @@ namespace VendingMachine.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("SellerId");
-
                     b.ToTable("Products");
                 });
 
             modelBuilder.Entity("VendingMachine.Models.User", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
                     b.Property<int>("Balance")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
@@ -91,20 +86,7 @@ namespace VendingMachine.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
-                    b.HasKey("Id");
-
                     b.ToTable("Users");
-                });
-
-            modelBuilder.Entity("VendingMachine.Models.Product", b =>
-                {
-                    b.HasOne("VendingMachine.Models.User", "Seller")
-                        .WithMany()
-                        .HasForeignKey("SellerId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Seller");
                 });
 #pragma warning restore 612, 618
         }

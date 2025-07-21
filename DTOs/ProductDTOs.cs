@@ -20,7 +20,7 @@
         public string ProductName { get; set; } = string.Empty;
         public int Cost { get; set; }
         public int AmountAvailable { get; set; }
-        public string SellerId { get; set; } = string.Empty;
+        public int SellerId { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
     }

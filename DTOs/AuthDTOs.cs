@@ -1,9 +1,12 @@
-﻿namespace VendingMachine.DTOs
+﻿using VendingMachine.Models;
+
+namespace VendingMachine.DTOs
 {
     public class LoginRequest
     {
         public string Username { get; set; } = string.Empty;
         public string Password { get; set; } = string.Empty;
+        public int? Role { get; set; } // "Buyer" or "Seller"
     }
 
     public class LoginResponse
@@ -15,7 +18,7 @@
 
     public class UserDto
     {
-        public string Id { get; set; } = string.Empty;
+        public int Id { get; set; }
         public string Username { get; set; } = string.Empty;
         public string Role { get; set; } = string.Empty;
         public int? Balance { get; set; }

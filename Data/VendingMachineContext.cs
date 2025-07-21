@@ -1,10 +1,10 @@
-﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+﻿
 using Microsoft.EntityFrameworkCore;
 using VendingMachine.Models;
 
 namespace VendingMachine.Data
 {
-    public class VendingMachineContext : IdentityDbContext<ApplicationUser>
+    public class VendingMachineContext : DbContext
     {
         public VendingMachineContext()
         {
@@ -23,15 +23,23 @@ namespace VendingMachine.Data
         }
 
         public DbSet<Product> Products { get; set; }
+        public DbSet<User> Users { get; set; }
         //public DbSet<Transaction> Transactions { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
 
-            builder.Entity<ApplicationUser>(entity =>
+            builder.Entity<User>(entity =>
             {
                 entity.Property(e => e.Role).HasConversion<string>();
+                entity.HasKey(e => e.Id);
+                entity.Property(e => e.Id).ValueGeneratedOnAdd();
+                entity.Property(e => e.UserName).IsRequired().HasMaxLength(50);
+                entity.Property(e => e.Password).IsRequired().HasMaxLength(100);
+                entity.Property(e => e.Balance).HasDefaultValue(0);
+                entity.Property(e => e.CreatedAt).HasDefaultValueSql("GETUTCDATE()");
+                entity.Property(e => e.UpdatedAt).HasDefaultValueSql("GETUTCDATE()").ValueGeneratedOnAddOrUpdate();  
             });
 
             builder.Entity<Product>(entity =>

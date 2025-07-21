@@ -15,7 +15,7 @@ namespace VendingMachine.Services
             _configuration = configuration;
         }
 
-        public string GenerateToken(ApplicationUser user)
+        public string GenerateToken(User user)
         {
             var jwtSettings = _configuration.GetSection("Jwt");
             var key = Encoding.ASCII.GetBytes(jwtSettings["Key"]);
@@ -24,7 +24,7 @@ namespace VendingMachine.Services
             {
                 Subject = new ClaimsIdentity(new[]
                 {
-                new Claim("userId", user.Id),
+                new Claim("userId", user.Id.ToString()),
                 new Claim("username", user.UserName ?? ""),
                 new Claim("role", user.Role.ToString())
             }),
