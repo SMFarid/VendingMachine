@@ -58,16 +58,29 @@ namespace VendingMachine.Services
             return new PurchaseResponse
             {
                 Message = "Purchase successful",
-
+                Transaction = new TransactionDto
+                {
+                    Id = transaction.Id,
+                    ProductId = transaction.ProductId,
+                    ProductName = transaction.ProductName,
+                    Quantity = transaction.Quantity,
+                    UnitCost = transaction.UnitCost,
+                    TotalCost = transaction.TotalCost,
+                    BuyerId = transaction.BuyerId,
+                    SellerId = transaction.SellerId,
+                    Timestamp = transaction.Timestamp
+                },
                 Change = change,
                 RemainingBalance = buyer.Balance
             };
         }
 
+        //Can be used to retrieve the transaction history for a user
+        //Can be added as an endpoint if needed. Will only be accessible to Sellers. Will show each Seller's sales history.
         public async Task<List<TransactionDto>> GetTransactionHistoryAsync(int userId, int limit = 50, int offset = 0)
         {
             return await _context.Transactions
-                .Where(t => t.BuyerId == userId)
+                .Where(t => t.SellerId == userId)
                 .OrderByDescending(t => t.Timestamp)
                 .Skip(offset)
                 .Take(limit)

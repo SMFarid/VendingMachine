@@ -29,7 +29,7 @@ namespace VendingMachine.Controllers
             }
 
             var userId = User.FindFirst("userId")?.Value;
-            var response = await _walletService.DepositCoinsAsync(userId!, request.Coins);
+            var response = await _walletService.DepositCoinsAsync(int.Parse(userId!), request.Coins);
             return Ok(response);
         }
 
@@ -37,7 +37,7 @@ namespace VendingMachine.Controllers
         public async Task<ActionResult<object>> GetBalance()
         {
             var userId = User.FindFirst("userId")?.Value;
-            var balance = await _walletService.GetBalanceAsync(userId!);
+            var balance = await _walletService.GetBalanceAsync(int.Parse(userId!));
             return Ok(new { balance, currency = "cents" });
         }
 
@@ -45,7 +45,7 @@ namespace VendingMachine.Controllers
         public async Task<ActionResult<object>> ResetWallet()
         {
             var userId = User.FindFirst("userId")?.Value;
-            var returnedCoins = await _walletService.ResetWalletAsync(userId!);
+            var returnedCoins = await _walletService.ResetWalletAsync(int.Parse(userId!));
             var returnedAmount = returnedCoins.Sum();
 
             return Ok(new

@@ -13,7 +13,7 @@ namespace VendingMachine.Services
             _context = context;
         }
 
-        public async Task<DepositResponse> DepositCoinsAsync(string userId, List<int> coins)
+        public async Task<DepositResponse> DepositCoinsAsync(int userId, List<int> coins)
         {
             var user = await _context.Users.FindAsync(userId);
             if (user == null) throw new InvalidOperationException("User not found");
@@ -32,13 +32,13 @@ namespace VendingMachine.Services
             };
         }
 
-        public async Task<int> GetBalanceAsync(string userId)
+        public async Task<int> GetBalanceAsync(int userId)
         {
             var user = await _context.Users.FindAsync(userId);
             return user?.Balance ?? 0;
         }
 
-        public async Task<List<int>> ResetWalletAsync(string userId)
+        public async Task<List<int>> ResetWalletAsync(int userId)
         {
             var user = await _context.Users.FindAsync(userId);
             if (user == null) throw new InvalidOperationException("User not found");
