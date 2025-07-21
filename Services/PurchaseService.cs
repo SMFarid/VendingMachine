@@ -34,19 +34,6 @@ namespace VendingMachine.Services
             product.UpdatedAt = DateTime.UtcNow;
             buyer.UpdatedAt = DateTime.UtcNow;
 
-            //// Create transaction record
-            //var transaction = new Transaction
-            //{
-            //    ProductId = product.Id,
-            //    ProductName = product.ProductName,
-            //    Quantity = request.Quantity,
-            //    UnitCost = product.Cost,
-            //    TotalCost = totalCost,
-            //    BuyerId = buyerId,
-            //    SellerId = product.SellerId
-            //};
-
-            //_context.Transactions.Add(transaction);
             await _context.SaveChangesAsync();
 
             // Calculate change (not deducted from balance, just informational)
@@ -55,43 +42,11 @@ namespace VendingMachine.Services
             return new PurchaseResponse
             {
                 Message = "Purchase successful",
-                //Transaction = new TransactionDto
-                //{
-                //    Id = transaction.Id,
-                //    ProductId = transaction.ProductId,
-                //    ProductName = transaction.ProductName,
-                //    Quantity = transaction.Quantity,
-                //    UnitCost = transaction.UnitCost,
-                //    TotalCost = transaction.TotalCost,
-                //    BuyerId = transaction.BuyerId,
-                //    SellerId = transaction.SellerId,
-                //    Timestamp = transaction.Timestamp
-                //},
+
                 Change = change,
                 RemainingBalance = buyer.Balance
             };
         }
 
-        //    public async Task<List<TransactionDto>> GetTransactionHistoryAsync(string userId, int limit = 50, int offset = 0)
-        //    {
-        //        return await _context.Transactions
-        //            .Where(t => t.BuyerId == userId)
-        //            .OrderByDescending(t => t.Timestamp)
-        //            .Skip(offset)
-        //            .Take(limit)
-        //            .Select(t => new TransactionDto
-        //            {
-        //                Id = t.Id,
-        //                ProductId = t.ProductId,
-        //                ProductName = t.ProductName,
-        //                Quantity = t.Quantity,
-        //                UnitCost = t.UnitCost,
-        //                TotalCost = t.TotalCost,
-        //                BuyerId = t.BuyerId,
-        //                SellerId = t.SellerId,
-        //                Timestamp = t.Timestamp
-        //            })
-        //            .ToListAsync();
-        //    }
     }
 }

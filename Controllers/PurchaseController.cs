@@ -7,7 +7,7 @@ namespace VendingMachine.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    [Authorize(Policy = "BuyerOnly")]
+    [Authorize(Roles = "Buyer")]
     public class PurchaseController : ControllerBase
     {
         private readonly IPurchaseService _purchaseService;
@@ -18,6 +18,7 @@ namespace VendingMachine.Controllers
         }
 
         [HttpPost]
+        [Route("Buy")]
         public async Task<ActionResult<PurchaseResponse>> Buy(PurchaseRequest request)
         {
             try
@@ -32,19 +33,20 @@ namespace VendingMachine.Controllers
             }
         }
 
-        //[HttpPost]
-        //public async Task<ActionResult<PurchaseResponse>> Deposit(PurchaseRequest request)
-        //{
-        //    try
-        //    {
-        //        var userId = User.FindFirst("userId")?.Value;
-        //        var response = await _purchaseService.PurchaseProductAsync(userId!, request);
-        //        return Ok(response);
-        //    }
-        //    catch (InvalidOperationException ex)
-        //    {
-        //        return UnprocessableEntity(new { error = ex.Message });
-        //    }
-        //}
+        [HttpPost]
+        [Route("Deposit")]
+        public async Task<ActionResult<PurchaseResponse>> Deposit(PurchaseRequest request)
+        {
+            try
+            {
+                var userId = User.FindFirst("userId")?.Value;
+                var response = await _purchaseService.PurchaseProductAsync(userId!, request);
+                return Ok(response);
+            }
+            catch (InvalidOperationException ex)
+            {
+                return UnprocessableEntity(new { error = ex.Message });
+            }
+        }
     }
 }

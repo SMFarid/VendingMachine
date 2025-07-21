@@ -11,7 +11,6 @@ namespace VendingMachine.Controllers
     [Route("api/[controller]")]
     public class AuthController : ControllerBase
     {
-        //private readonly UserManager<User> _userManager;
         private readonly ITokenService _tokenService;
         private readonly ILogger<AuthController> _logger;
         private readonly IUserService _userService;
@@ -41,29 +40,6 @@ namespace VendingMachine.Controllers
             var token = _tokenService.GenerateToken(user);
             _logger.LogInformation("User {Username} logged in successfully and token generated.", user.UserName);
             return Ok(new { Token = token });
-
-            //var user = await _userManager.FindByNameAsync(request.Username);
-            //if (user == null || !await _userManager.CheckPasswordAsync(user, request.Password))
-            //{
-            //    return Unauthorized(new { error = "Invalid credentials" });
-            //}
-
-            //var token = _tokenService.GenerateToken(user);
-
-            //return Ok(new LoginResponse
-            //{
-            //    Token = token,
-            //    User = new UserDto
-            //    {
-            //        Id = user.Id,
-            //        Username = user.UserName ?? "",
-            //        Role = user.Role.ToString(),
-            //        Balance = user.Role == UserRole.Buyer ? user.Balance : null,
-            //        CreatedAt = user.CreatedAt,
-            //        UpdatedAt = user.UpdatedAt
-            //    },
-            //    ExpiresIn = 3600
-            //});
         }
 
 
@@ -76,7 +52,7 @@ namespace VendingMachine.Controllers
         }
 
         [HttpPost("register")]
-        public async Task<IActionResult> Register([FromBody] LoginRequest request)
+        public async Task<IActionResult> Register([FromBody] RegisterRequest request)
         {
             _logger.LogInformation("Attempting to register user: {Username}", request.Username);
 
@@ -93,6 +69,13 @@ namespace VendingMachine.Controllers
                 return Conflict("Username already exists.");
             }
 
+            //Add check that request.Role is within valid range
+            if (request.Role.HasValue && (request.Role < (int)UserRole.Buyer || request.Role > (int)UserRole.Seller))
+            {
+                _logger.LogWarning("Registration failed: Invalid role {Role} for user {Username}", request.Role, request.Username);
+                return BadRequest("Invalid role specified.");
+            }
+
             var newUser = new User
             {
                 UserName = request.Username,
@@ -102,8 +85,45 @@ namespace VendingMachine.Controllers
 
             var addedUser = await _userService.AddUserAsync(newUser);
 
-            _logger.LogInformation("User {Username} registered successfully with ID: {UserId}", addedUser.UserName); //, addedUser.Id
-            return Ok(new { Message = "User registered successfully."  });//, UserId = addedUser.Id
+            _logger.LogInformation("User {Username} registered successfully with ID: {UserId}", addedUser.UserName, addedUser.Id);
+            return Ok(new { Message = "User registered successfully.", UserId = addedUser.Id });
+        }
+
+        
+        [HttpPut("update")]
+        [Authorize]
+        public async Task<IActionResult> UpdateUser([FromBody] UserDTO userDto)
+        {
+            var result = await _userService.UpdateUserAsync(userDto);
+            if (result)
+            {
+                _logger.LogInformation("User with ID {UserId} updated successfully.", userDto.Id);
+                return Ok(new { Message = "User updated successfully." });
+            }
+            else
+            {
+                _logger.LogWarning("Update failed for user with ID {UserId}: User not found.", userDto.Id);
+                return NotFound("User not found.");
+            }
+        }
+
+        //Add endpoint to delete user
+        [HttpDelete("delete")]
+        [Authorize]
+        public async Task<IActionResult> DeleteUser(int userId)
+        {
+            _logger.LogInformation("Attempting to delete user with ID: {UserId}", userId);
+            var result = await _userService.DeleteUserAsync(userId);
+            if (result)
+            {
+                _logger.LogInformation("User with ID {UserId} deleted successfully.", userId);
+                return Ok(new { Message = "User deleted successfully." });
+            }
+            else
+            {
+                _logger.LogWarning("Delete failed for user with ID {UserId}: User not found.", userId);
+                return NotFound("User not found.");
+            }
         }
     }
 }

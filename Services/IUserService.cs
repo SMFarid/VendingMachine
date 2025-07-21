@@ -1,4 +1,5 @@
-﻿using VendingMachine.Models;
+﻿using VendingMachine.DTOs;
+using VendingMachine.Models;
 
 namespace VendingMachine.Services
 {
@@ -7,8 +8,8 @@ namespace VendingMachine.Services
     {
         Task<User?> GetUserByUsernameAsync(string username);
         Task<User> AddUserAsync(User user);
-        Task<bool> UpdateUserAsync(User user); // For completeness
-        Task<bool> DeleteUserAsync(int userId); // For completeness
+        Task<bool> UpdateUserAsync(UserDTO user); 
+        Task<bool> DeleteUserAsync(int userId);
     }
 
 }

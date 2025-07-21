@@ -1,4 +1,6 @@
-﻿using VendingMachine.Data;
+﻿using Azure.Core;
+using VendingMachine.Data;
+using VendingMachine.DTOs;
 using VendingMachine.Models;
 
 namespace VendingMachine.Services
@@ -43,10 +45,10 @@ namespace VendingMachine.Services
             return user;
         }
 
-        //Placeholder for future database operations
-        public async Task<bool> UpdateUserAsync(User user)
+        
+        public async Task<bool> UpdateUserAsync(UserDTO user)
         {
-            _logger.LogInformation("UserService: Attempting to update user with ID: {UserId}"); //, user.Id
+            _logger.LogInformation("UserService: Attempting to update user with ID: {UserId}", user.Id);
             // Simulate async operation
             await Task.Delay(10);
             var existingUser = _context.Users.FirstOrDefault(u => u.Id == user.Id);
@@ -55,15 +57,21 @@ namespace VendingMachine.Services
                 _logger.LogWarning("UserService: Update failed, user with ID {UserId} not found.", user.Id);
                 return false;
             }
-            existingUser.UserName = user.UserName;
-            existingUser.Password = user.Password; // Be careful with password updates in real apps
-            existingUser.Role = user.Role;
-            await _context.SaveChangesAsync();
+            
+            if (user.Role.HasValue)
+                existingUser.Role = (UserRole)user.Role.Value;
+
+            if (!string.IsNullOrWhiteSpace(user.Password))
+            {
+                existingUser.Password = BCrypt.Net.BCrypt.HashPassword(user.Password);
+            }
+
+             await _context.SaveChangesAsync();
             _logger.LogInformation("UserService: User with ID {UserId} updated successfully.", user.Id);
             return true;
         }
 
-        //Placeholder for future database operations
+        
         public async Task<bool> DeleteUserAsync(int userId)
         {
             _logger.LogInformation("UserService: Attempting to delete user with ID: {UserId}", userId);
